@@ -1,0 +1,73 @@
+<main class="page">
+  <header class="head">
+    <h1>Utilizadores</h1>
+    <p class="count" aria-live="polite">
+      {{ filteredUsers().length }}
+      {{ filteredUsers().length === 1 ? 'utilizador' : 'utilizadores' }}
+    </p>
+  </header>
+
+  <div class="search">
+    <i class="bx bx-search" aria-hidden="true"></i>
+    <input
+      type="search"
+      placeholder="Pesquisar por nome ou email"
+      aria-label="Pesquisar utilizadores"
+      autocomplete="off"
+      [value]="searchTerm()"
+      (input)="onSearch($event)"
+    />
+    @if (searchTerm()) {
+      <button class="clear" type="button" aria-label="Limpar pesquisa" (click)="clear()">
+        <i class="bx bx-x" aria-hidden="true"></i>
+      </button>
+    }
+  </div>
+
+  <div class="chips" role="group" aria-label="Filtrar por função">
+    @for (r of roles; track r) {
+      <button
+        type="button"
+        class="chip"
+        [class.active]="role() === r"
+        [attr.aria-pressed]="role() === r"
+        (click)="role.set(r)"
+      >
+        {{ r }}
+      </button>
+    }
+  </div>
+
+  @if (filteredUsers().length) {
+    <ul class="list">
+      @for (user of filteredUsers(); track user.id) {
+        <li class="row">
+          <div class="avatar">
+            <img [src]="user.avatar" alt="" width="48" height="48" loading="lazy" />
+            <span class="dot" [class.online]="user.online">
+              <span class="sr-only">{{ user.online ? 'Online' : 'Offline' }}</span>
+            </span>
+          </div>
+
+          <div class="info">
+            <strong class="name">{{ user.name }}</strong>
+            <span class="email">{{ user.email }}</span>
+          </div>
+
+          <span class="badge" [attr.data-role]="user.role">{{ user.role }}</span>
+
+          <a class="action" [href]="'mailto:' + user.email" [attr.aria-label]="'Enviar email a ' + user.name">
+            <i class="bx bx-envelope" aria-hidden="true"></i>
+          </a>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="empty">
+      <i class="bx bx-user-x" aria-hidden="true"></i>
+      <h2>Nenhum utilizador encontrado</h2>
+      <p>Verifica a ortografia ou tenta outro nome ou email.</p>
+      <button type="button" class="reset" (click)="resetFilters()">Limpar filtros</button>
+    </div>
+  }
+</main>
